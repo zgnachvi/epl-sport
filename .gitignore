@@ -1,0 +1,12 @@
+# IDE ignores
+/.settings/
+/.classpath
+/.project
+.idea/
+*.iml
+target/
+#Ignoring nerd files
+Makefile
+*.swp #ignore vim backup files
+*.swo
+*~

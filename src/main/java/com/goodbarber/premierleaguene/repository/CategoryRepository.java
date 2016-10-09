@@ -74,7 +74,7 @@ public class CategoryRepository  extends ConnectionManager implements Collection
 
     }
 
-    public static ResponseEntity add(Category category) {
+    public static ResponseEntity<Category> add(Category category) {
             if ( ! alreadyInserted(category.name)) {
                 MongoCollection<Document> collection = database.getCollection(CollectionName.categories);
                 Document doc = new Document("rssFeed", category.rssFeed)
@@ -91,8 +91,8 @@ public class CategoryRepository  extends ConnectionManager implements Collection
 
     }
 
-    public static ResponseEntity update(String name, Category category) {
-        if (alreadyInserted(name)) {
+    public static ResponseEntity<Category> update(String name, Category category) {
+        if ( ! alreadyInserted(category.name)) {
             Document doc = new Document("name", category.name);
             if (category.rssFeed != null) {
                 doc.append("rssFeed", category.rssFeed);
@@ -107,7 +107,7 @@ public class CategoryRepository  extends ConnectionManager implements Collection
             return new ResponseEntity(category, HttpStatus.OK);
         }
 
-        return new ResponseEntity(HttpStatus.NOT_FOUND);
+        return new ResponseEntity(HttpStatus.FORBIDDEN);
 
     }
 
@@ -126,7 +126,7 @@ public class CategoryRepository  extends ConnectionManager implements Collection
 
     public static ResponseEntity delete(String name) {
         if (alreadyInserted(name)) {
-            database.getCollection(CollectionName.categories).deleteMany(new Document("name", name));
+            database.getCollection(CollectionName.categories).deleteOne(new Document("name", name));
             return new ResponseEntity(HttpStatus.OK);
         }
 
@@ -137,10 +137,8 @@ public class CategoryRepository  extends ConnectionManager implements Collection
     public static Boolean alreadyInserted(String name) {
         Document first = database.getCollection(CollectionName.categories)
                 .find(new BasicDBObject("name", name))
-                .projection(new BasicDBObject("_id", 0).append("id", 1))
                 .limit(1)
                 .first();
-
         return  first != null;
 
     }

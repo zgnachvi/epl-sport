@@ -5,6 +5,7 @@ import com.goodbarber.premierleaguene.listeners.AppListener;
 import com.goodbarber.premierleaguene.parser.NewsParser;
 import com.goodbarber.premierleaguene.repository.CategoryRepository;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,7 +39,7 @@ public class CategoryResource {
         return new ResponseEntity(category, HttpStatus.OK);
     }
 
-    @RequestMapping(method = {RequestMethod.PUT})
+    @RequestMapping(method = {RequestMethod.PUT}, consumes = "application/json")
     public ResponseEntity<Category> add(@RequestBody Category category) {
         if (Objects.nonNull(category.name) && validFeed.test(category.rssFeed)){
             return CategoryRepository.add(category);

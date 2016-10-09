@@ -18,6 +18,7 @@ public class SpringConfig extends WebMvcConfigurerAdapter {
                   .defaultContentType(MediaType.APPLICATION_JSON);
     }
 
+
     @Override
     public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
         super.configureDefaultServletHandling(configurer);

@@ -14,10 +14,12 @@ import com.goodbarber.premierleaguene.repository.ConnectionManager;
 import com.goodbarber.premierleaguene.spring.SpringConfig;
 
 import com.goodbarber.premierleaguene.utils.ProjectConfig;
-import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.junit.Before;
+import org.junit.FixMethodOrder;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
@@ -33,6 +35,7 @@ import java.util.List;
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(classes = { SpringConfig.class})
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class CategoryServiceTest {
     @Autowired
     private WebApplicationContext wac;
@@ -43,17 +46,18 @@ public class CategoryServiceTest {
         ConnectionManager.init();
     }
 
-    @Ignore
     @Test
-    public void addCategory() throws Exception {
+    public void test1Add() throws Exception {
         MockMvc mockMvc = webAppContextSetup(this.wac).build();
         ResultActions result;
 
         Category category = new Category();
-        category.name = "name";
+        category.name = "test";
         category.rssFeed = "http://golazogoal.com/feed/";
 
-        result = mockMvc.perform(put("category").contentType(MediaType.APPLICATION_JSON).content(new ObjectMapper().writeValueAsString(category)));
+        String content = new ObjectMapper().writeValueAsString(category);
+        result = mockMvc.perform(put("/category").contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON).content(content));
 
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$").exists());
@@ -61,17 +65,16 @@ public class CategoryServiceTest {
         TypeReference<Category> type = new TypeReference<Category>() {};
         category = new ObjectMapper().readValue(json, type);
         assertNotNull(category);
-        assertEquals("name", category.name);
+        assertEquals("test", category.name);
         assertEquals("http://golazogoal.com/feed/", category.rssFeed);
     }
 
-    @Ignore
     @Test
-    public void getCategory() throws Exception {
+    public void test2Get() throws Exception {
         MockMvc mockMvc = webAppContextSetup(this.wac).build();
         ResultActions result;
 
-        result = mockMvc.perform(get("/category/name/get").param("name", "name"));
+        result = mockMvc.perform(get("/category/test/get"));
 
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$").exists());
@@ -79,13 +82,12 @@ public class CategoryServiceTest {
         TypeReference<Category> type = new TypeReference<Category>() {};
         Category category = new ObjectMapper().readValue(json, type);
         assertNotNull(category);
-        assertEquals("name", category.name);
+        assertEquals("test", category.name);
         assertEquals("http://golazogoal.com/feed/", category.rssFeed);
     }
 
-    @Ignore
     @Test
-    public void testCategoryList() throws Exception {
+    public void test3List() throws Exception {
         MockMvc mockMvc = webAppContextSetup(this.wac).build();
         ResultActions result;
 
@@ -99,17 +101,16 @@ public class CategoryServiceTest {
         assertTrue(employees.size() > 0);
     }
 
-    @Ignore
     @Test
-    public void updateCategory() throws Exception {
+    public void test4Update() throws Exception {
         MockMvc mockMvc = webAppContextSetup(this.wac).build();
         ResultActions result;
 
         Category category = new Category();
-        category.name = "all1";
+        category.name = "Test";
         category.rssFeed = "http://golazogoal.com/feed/";
 
-        result = mockMvc.perform(post("/category/all").content(new ObjectMapper().writeValueAsString(category)));
+        result = mockMvc.perform(post("/category/test").accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON).content(new ObjectMapper().writeValueAsString(category)));
 
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$").exists());
@@ -117,20 +118,18 @@ public class CategoryServiceTest {
         TypeReference<Category> type = new TypeReference<Category>() {};
         category = new ObjectMapper().readValue(json, type);
         assertNotNull(category);
-        assertEquals("name", category.name);
+        assertEquals("Test", category.name);
         assertEquals("http://golazogoal.com/feed/", category.rssFeed);
     }
 
-    @Ignore
     @Test
-    public void deleteCategory() throws Exception {
+    public void test5delete() throws Exception {
         MockMvc mockMvc = webAppContextSetup(this.wac).build();
         ResultActions result;
 
-        result = mockMvc.perform(delete("/category/name2"));
+        result = mockMvc.perform(delete("/category/Test").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON));
 
         result.andExpect(status().isOk());
-        result.andExpect(jsonPath("$").exists());
     }
 
 }

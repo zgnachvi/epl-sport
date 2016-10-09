@@ -8,9 +8,6 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-/**
- * Created by Niko on 10/8/2016.
- */
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {
@@ -21,5 +18,7 @@ public class SwaggerConfig {
                 .apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.any())
                 .build();
+
     }
+
 }
